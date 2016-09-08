@@ -1,4 +1,4 @@
-# Transcoder instalation
+# Transcoder instalation guide
 
 Инструкция по  установке серверной части ingest transcoder на ubuntu
 
@@ -28,10 +28,10 @@ mkdir /home/$user/dalet
 назначить правильные права на рабочий каталог
 
 ```
-sudo chmod 2775 /opt/transcoder/tmp
-sudo chown transcoder:transcoder /opt/transcoder/tmp
-sudo chmod 2775 /opt/transcoder/log
-sudo chown transcoder:transcoder /opt/transcoder/log
+sudo chmod -R 2775 /opt/transcoder/tmp
+sudo chown -R transcoder:transcoder /opt/transcoder/tmp
+sudo chmod -R 2775 /opt/transcoder/log
+sudo chown -R transcoder:transcoder /opt/transcoder/log
 ```
 
 создать симлинку для PATH
@@ -49,5 +49,7 @@ sudo chmod +x /opt/transcoder/bin/transcoder
  ```
 /usr/local/sbin/transcoder >> /opt/transcoder/log/daemon.log 2>&1
 ```
-
-
+читать вывод 
+```
+tail -f /opt/transcoder/log/daemon.log
+```
