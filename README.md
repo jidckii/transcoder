@@ -4,7 +4,6 @@
 
 ```
 cd /opt
-
 git clone https://github.com/jidckii/transcoder.git
 ```
 
@@ -20,13 +19,9 @@ sudo adduser transcoder
 
 ```
 mkdir /home/$user/queue-video-tmp/
-
 mkdir/home/$user/source-video-tmp/
-
 mkdir /home/$user/end-video-tmp/
-
 mkdir /home/$user/frank/
-
 mkdir /home/$user/dalet
 ```
 
@@ -34,11 +29,8 @@ mkdir /home/$user/dalet
 
 ```
 sudo chmod 2775 /opt/transcoder/tmp
-
 sudo chown transcoder:transcoder /opt/transcoder/tmp
-
 sudo chmod 2775 /opt/transcoder/log
-
 sudo chown transcoder:transcoder /opt/transcoder/log
 ```
 
