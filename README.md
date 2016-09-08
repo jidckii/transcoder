@@ -47,7 +47,7 @@ sudo chmod +x /opt/transcoder/bin/transcoder
 # Для работы в режиме демона при этом с возможностью обрятной связи для инджестера запускать с параметрами:
  
  ```
-/usr/local/sbin/transcoder >> /opt/transcoder/log/daemon.log 2>&1
+/usr/local/sbin/transcoder >> /opt/transcoder/log/daemon.log 2>&1 &
 ```
 читать вывод 
 ```
