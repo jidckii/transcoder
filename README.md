@@ -37,7 +37,11 @@ sudo chown transcoder:transcoder /opt/transcoder/log
 создать симлинку для PATH
 
 ```
-ls -s /opt/transcoder/bin/transcoder /usr/local/sbin/transcoder
+sudo ln -s /opt/transcoder/bin/transcoder /usr/local/sbin/transcoder
+```
+Дать права на исполнение
+```
+sudo chmod +x /opt/transcoder/bin/transcoder
 ```
 
 # Для работы в режиме демона при этом с возможностью обрятной связи для инджестера запускать с параметрами:
