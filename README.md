@@ -3,6 +3,7 @@
 Инструкция по  установке серверной части ingest transcoder на ubuntu
 
 cd /opt
+
 git clone https://github.com/jidckii/transcoder.git
 
 Создаем пользователя с нужным именем и записываем в переменную $user в /opt/bin/transcoder
