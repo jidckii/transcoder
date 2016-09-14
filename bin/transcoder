@@ -41,11 +41,12 @@ time_end="Обработка завершена в"
 no_profile="Профиль для входящего видео не задан!"
 
 # Проверяем не запущена ли копия уже
-d_run=` ps aux | grep /usr/local/sbin/transcoder | grep -v grep | wc -l`
-if [ "$d_run" -gt "1" ]; then
-  echo -e '\n' "\e[1;31m $ErrInProgress  \e[0m" '\n'
-  exit 1
-fi 
+# d_run=`ps aux | grep /usr/local/sbin/transcoder | grep -v grep`
+# echo $d_run
+# if [ "$d_run" -gt "1" ]; then
+  # echo -e '\n' "\e[1;31m $ErrInProgress  \e[0m" '\n'
+  # exit 1
+# fi 
 # Заходим в цикл и работаем как бы в режиме демона  
 while true; do  
   tmp_video_size1=`du -s $queue_path | awk '{print $1}'`
