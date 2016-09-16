@@ -154,6 +154,7 @@ while true; do
       ps_status=`ps -e | grep ffmpeg | wc -l`
     done
 
+    sleep 1
     echo -e '\n' $text9 '\n' >> $log_file 2>&1
     mediainfo $end_path$end_file_name.mov >> $log_file 2>&1
     date_time_end=`date +%H:%M_%d-%m-%Y`
