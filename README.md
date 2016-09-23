@@ -18,11 +18,11 @@ sudo adduser transcoder
 создать у $user в домашней директории нужные каталоги
 
 ```
-mkdir /home/$user/queue-video-tmp/
-mkdir/home/$user/source-video-tmp/
-mkdir /home/$user/end-video-tmp/
-mkdir /home/$user/frank/
-mkdir /home/$user/dalet
+mkdir /home/transcoder/queue-video-tmp/
+mkdir/home/transcoder/source-video-tmp/
+mkdir /home/transcoder/end-video-tmp/
+mkdir /home/transcoder/frank/
+mkdir /home/transcoder/dalet
 ```
 
 назначить правильные права на рабочий каталог

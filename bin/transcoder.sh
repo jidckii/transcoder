@@ -47,9 +47,9 @@ no_profile="Профиль для входящего видео не задан!
 # if [ "$d_run" -gt "1" ]; then
   # echo -e '\n' "\e[1;31m $ErrInProgress  \e[0m" '\n'
   # exit 1
-# fi 
-# Заходим в цикл и работаем как бы в режиме демона  
-while true; do  
+# fi
+# Заходим в цикл и работаем как бы в режиме демона
+while true; do
   tmp_video_size1=`du -s $queue_path | awk '{print $1}'`
   sleep 10
   # echo -e '\n' "\e[0;32m $text1 \e[0m" '\n'
@@ -61,7 +61,7 @@ while true; do
     tmp_video_size_hum=`du -s -h $queue_path | awk '{print $1}'`
     echo -e '\n' "\e[0;32m $text7 \e[1;95m $tmp_video_size_hum  \e[0m" '\n'
 
-    if [ "$tmp_video_size1" -ne "$tmp_video_size2" ]; then  # Убеждаемся, что временный каталог более не растет 
+    if [ "$tmp_video_size1" -ne "$tmp_video_size2" ]; then  # Убеждаемся, что временный каталог более не растет
       echo -e '\n' "\e[0;32m $text2 \e[0m" '\n'
       continue
     fi
@@ -86,8 +86,8 @@ while true; do
       mkdir $trans_source_path$end_file_name 2>&1
 
       for name in $(ls -1 $source_path$end_file_name); do
-        sleep 1
-# Запускаем обсчет
+        sleep 0.5
+        # Запускаем обсчет
         ffmpeg \
           -i $source_path$end_file_name/$name -c:v dvvideo -s 720x576 -vf crop=in_w-2*222 \
           -c:a pcm_s16le -f mxf $trans_source_path$end_file_name/$name.mxf > $log_dir$end_file_name/$name.log 2>&1 &
@@ -101,8 +101,8 @@ while true; do
       mkdir $trans_source_path$end_file_name 2>&1
 
       for name in $(ls -1 $source_path$end_file_name); do
-        sleep 1
-# Запускаем обсчет
+        sleep 0.5
+        # Запускаем обсчет
         ffmpeg \
           -i $source_path$end_file_name/$name -map 0:0 -c:v dvvideo -s 720x576 -vf crop=in_w-2*222 \
           -filter_complex "[0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout]" -map "[aout]" \
@@ -141,10 +141,10 @@ while true; do
     awk '{print "file \x27"$0"\x27"}' $pre_list_file | sort > $list_file 2>&1
     tmp_video_size_hum=`du -s -h $trans_source_path | awk '{print $1}'`
     echo -e '\n' "\e[1;32m $text12 \e[1;33m $end_file_name \e[1;95m $d_wc \e[1;32m файлов \e[0m" '\n'
-    echo -e '\n' $text8  '\n' >> $log_file 
+    echo -e '\n' $text8  '\n' >> $log_file
     mediainfo $source_path$end_file_name/$media_info_name >> $log_file 2>&1
     sleep 1
-# Запускаем объединение
+    # Запускаем объединение
     ffmpeg -f concat -safe 0 -i $list_file -map 0:0 -map 0:1 -c copy -f mov $end_path$end_file_name.mov > $log_dir$end_file_name/$end_file_name.log 2>&1 &
 
     sleep 1
@@ -171,7 +171,7 @@ while true; do
     echo -e '\n' "\e[1;35m $text5 \e[0m" '\n'
     rm -r -f $source_path* && rm -r -f $end_path* && rm -r -f $trans_source_path* && rm -r -f $log_dir* > /dev/null 2>&1
     rm  $pre_list_file $list_file > /dev/null 2>&1
-    echo -e '\n' "\e[1;96m $text1 \e[0m" '\n' 
+    echo -e '\n' "\e[1;96m $text1 \e[0m" '\n'
     break
   done
 done
