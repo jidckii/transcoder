@@ -19,10 +19,12 @@ sudo adduser transcoder
 
 ```
 mkdir /home/transcoder/queue-video-tmp/
-mkdir/home/transcoder/source-video-tmp/
+mkdir /home/transcoder/source-video-tmp/
+mkdir /home/transcoder/trans-video-tmp/
 mkdir /home/transcoder/end-video-tmp/
 mkdir /home/transcoder/frank/
-mkdir /home/transcoder/dalet
+mkdir /home/transcoder/dalet/
+mkdir /home/transcoder/logs/
 ```
 
 назначить правильные права на рабочий каталог
