@@ -28,7 +28,7 @@ sudo apt-get install cifs-utils mediainfo zip
 sudo apt-get install vim htop 
 ```
 
-Коприуем пргу к себе:
+Коприуем программу к себе:
 ```
 cd /opt
 git clone https://github.com/jidckii/transcoder.git
@@ -75,8 +75,8 @@ tail -f /opt/transcoder/log/daemon.log
 В /etc/fstab прописываем шары cifs в которые будем удаленно копировать
 ```
 # Share
-//netapp1.otv.loc/daletplus/Storage/RSU/IMPORT_EDITOR   /home/transcoder/dalet   cifs    _netdev,credentials=/root/.smbcredentials,rw,noperm,uid=transcoder,gid=transcoder,dir_mode=0777,file_mode=0777      0       0
-//frank.otv.loc/frank/OBMEN_NEWS   /home/transcoder/frank   cifs    _netdev,credentials=/root/.smbcredentials,rw,noperm,uid=transcoder,gid=transcoder,dir_mode=0777,file_mode=0777      0       0
+//server.domain/path   /home/transcoder/dalet   cifs    _netdev,credentials=/root/.smbcredentials,rw,noperm,uid=transcoder,gid=transcoder,dir_mode=0777,file_mode=0777      0       0
+//server.domain/path   /home/transcoder/frank   cifs    _netdev,credentials=/root/.smbcredentials,rw,noperm,uid=transcoder,gid=transcoder,dir_mode=0777,file_mode=0777      0       0
 
 ```
 в файле credentials=/root/.smbcredentials
