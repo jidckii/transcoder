@@ -79,6 +79,7 @@ while true; do
 
     if [ "$media_info_stp" -eq "1" ]; then
       tmp_video_size_hum=`du -s -h $source_path | awk '{print $1}'`
+      echo -e '\n' "$date_time" '\n'
       echo -e '\n' "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m" '\n'
       echo -e $time_enter > $log_file 2>&1
       echo $date_time >> $log_file 2>&1
@@ -94,6 +95,7 @@ while true; do
       done
     elif [ "$media_info_stp" -eq "4" ]; then
       tmp_video_size_hum=`du -s -h $source_path | awk '{print $1}'`
+      echo -e '\n' "$date_time" '\n'
       echo -e '\n' "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m" '\n'
       echo -e $time_enter > $log_file 2>&1
       echo $date_time >> $log_file 2>&1
@@ -171,6 +173,7 @@ while true; do
     echo -e '\n' "\e[1;35m $text5 \e[0m" '\n'
     rm -r -f $source_path* && rm -r -f $end_path* && rm -r -f $trans_source_path* && rm -r -f $log_dir* > /dev/null 2>&1
     rm  $pre_list_file $list_file > /dev/null 2>&1
+    echo -e '\n' "$date_time_end" '\n'
     echo -e '\n' "\e[1;96m $text1 \e[0m" '\n'
     break
   done
