@@ -1,0 +1,16 @@
+[Unit]
+Description=Auto Ingest Daemon (AID)
+Documentation=https://github.com/jidckii/transcoder
+After=network.target
+
+[Service]
+User=transcoder
+Group=transcoder
+
+Restart=always
+
+ExecStartPre=/opt/transcoder/bin/rm.sh
+ExecStart=/bin/bash -c '/opt/transcoder/bin/transcoder.sh > /opt/transcoder/log/daemon.log'
+
+[Install]
+WantedBy=multi-user.target
