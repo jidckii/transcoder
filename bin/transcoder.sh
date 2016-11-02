@@ -171,6 +171,14 @@ while true; do
     cp -R $source_path* $frank_path$date_dir$v_hd >> $log_file  2>&1
     cp $end_path$end_file_name.mov $frank_path$date_dir$dlya_montaja >> $log_file 2>&1
     cp $log_dir$end_file_name.zip $frank_path$date_dir$end_log_dir
+
+    sleep 1
+    cp_status=`ps -e | grep -w "cp" | wc -l`
+    while [ "$ps_status" -gt "0" ]; do
+      sleep 2
+      cp_status=`ps -e | grep -w "cp" | wc -l`
+    done
+
     echo -e '\n' "\e[1;35m $text5 \e[0m" '\n' >> $log
     rm -r -f $source_path* && rm -r -f $end_path* && rm -r -f $trans_source_path* && rm -r -f $log_dir* > /dev/null 2>&1
     rm  $pre_list_file $list_file > /dev/null 2>&1
