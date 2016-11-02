@@ -8,6 +8,7 @@ bad_list1=/opt/transcoder/tmp/bad_list1.txt
 bad_list2=/opt/transcoder/tmp/bad_list2.txt
 s_str=/opt/transcoder/tmp/s_diff.txt
 d_str=/opt/transcoder/tmp/d_diff.txt
+log=/opt/transcoder/log/daemon.log
 
 # Изначально пользователя с таким именем нужно создать
 
@@ -59,10 +60,10 @@ while true; do
     sleep 10
     tmp_video_size2=`du -s $queue_path | awk '{print $1}'`
     tmp_video_size_hum=`du -s -h $queue_path | awk '{print $1}'`
-    echo -e '\n' "\e[0;32m $text7 \e[1;95m $tmp_video_size_hum  \e[0m" '\n'
+    echo -e '\n' "\e[0;32m $text7 \e[1;95m $tmp_video_size_hum  \e[0m" '\n' >> $log
 
     if [ "$tmp_video_size1" -ne "$tmp_video_size2" ]; then  # Убеждаемся, что временный каталог более не растет
-      echo -e '\n' "\e[0;32m $text2 \e[0m" '\n'
+      echo -e '\n' "\e[0;32m $text2 \e[0m" '\n' >> $log
       continue
     fi
 
@@ -79,8 +80,8 @@ while true; do
 
     if [ "$media_info_stp" -eq "1" ]; then
       tmp_video_size_hum=`du -s -h $source_path | awk '{print $1}'`
-      echo -e '\n' "$date_time" '\n'
-      echo -e '\n' "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m" '\n'
+      echo -e '\n' "$date_time" '\n' >> $log
+      echo -e '\n' "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m" '\n' >> $log
       echo -e $time_enter > $log_file 2>&1
       echo $date_time >> $log_file 2>&1
       echo $end_file_name >> $log_file 2>&1
@@ -95,8 +96,8 @@ while true; do
       done
     elif [ "$media_info_stp" -eq "4" ]; then
       tmp_video_size_hum=`du -s -h $source_path | awk '{print $1}'`
-      echo -e '\n' "$date_time" '\n'
-      echo -e '\n' "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m" '\n'
+      echo -e '\n' "$date_time" '\n' >> $log
+      echo -e '\n' "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m" '\n' >> $log
       echo -e $time_enter > $log_file 2>&1
       echo $date_time >> $log_file 2>&1
       echo $end_file_name >> $log_file 2>&1
@@ -111,7 +112,7 @@ while true; do
           -ac 2 -c:a pcm_s16le -f mxf $trans_source_path$end_file_name/$name.mxf > $log_dir$end_file_name/$name.log 2>&1 &
       done
     else
-      echo -e '\n' "\e[1;31m $no_profile \e[0m "'\n'
+      echo -e '\n' "\e[1;31m $no_profile \e[0m "'\n' >> $log
     fi
 
     sleep 1
@@ -128,9 +129,9 @@ while true; do
       ls -1 $trans_source_path$end_file_name  | sed 's/.mxf//g' > $d_str
       diff $s_str $d_str | awk 'FNR>1' | awk '{print $2}' > $bad_list1
       bad_list=`cat $bad_list1`
-      echo -e '\n' "\e[1;31m $text10 \e[0m "'\n'
-      echo -e $bad_list
-      echo -e '\n' "\e[1;31m $text11 \e[0m" '\n'
+      echo -e '\n' "\e[1;31m $text10 \e[0m "'\n' >> $log
+      echo -e $bad_list >> $log
+      echo -e '\n' "\e[1;31m $text11 \e[0m" '\n' >> $log
       echo -e $text10 '\n' $bad_list '\n' >> $log_file 2>&1
       awk '{print "cp '$source_path$end_file_name'/"$0" '$frank_path$date_dir$bad_dir$end_file_name'"}' $bad_list1 > $bad_list2
       cp $template $workcopy
@@ -142,7 +143,7 @@ while true; do
     find $trans_source_path -name "*.mxf" > $pre_list_file 2>&1
     awk '{print "file \x27"$0"\x27"}' $pre_list_file | sort > $list_file 2>&1
     tmp_video_size_hum=`du -s -h $trans_source_path | awk '{print $1}'`
-    echo -e '\n' "\e[1;32m $text12 \e[1;33m $end_file_name \e[1;95m $d_wc \e[1;32m файлов \e[0m" '\n'
+    echo -e '\n' "\e[1;32m $text12 \e[1;33m $end_file_name \e[1;95m $d_wc \e[1;32m файлов \e[0m" '\n' >> $log
     echo -e '\n' $text8  '\n' >> $log_file
     mediainfo $source_path$end_file_name/$media_info_name >> $log_file 2>&1
     sleep 1
@@ -164,17 +165,17 @@ while true; do
     echo -e $date_time_end >> $log_file 2>&1
     mkdir $frank_path$date_dir$end_log_dir > /dev/null 2>&1
     zip -r $log_dir$end_file_name.zip $log_dir$end_file_name > /dev/null 2>&1
-    echo -e '\n' "\e[4;33m $text6 \e[0m" '\n'
-    cp $end_path$end_file_name.mov $dalet_path >> $log_file 2>&1
-    echo -e '\n' "\e[4;33m $text4 \e[0m" '\n'
+    echo -e '\n' "\e[4;33m $text6 \e[0m" '\n' >> $log
+    cp $end_path$end_file_name.mov $dalet_path >> $log_file 2>&1 &
+    echo -e '\n' "\e[4;33m $text4 \e[0m" '\n' >> $log
     cp -R $source_path* $frank_path$date_dir$v_hd >> $log_file  2>&1
     cp $end_path$end_file_name.mov $frank_path$date_dir$dlya_montaja >> $log_file 2>&1
     cp $log_dir$end_file_name.zip $frank_path$date_dir$end_log_dir
-    echo -e '\n' "\e[1;35m $text5 \e[0m" '\n'
+    echo -e '\n' "\e[1;35m $text5 \e[0m" '\n' >> $log
     rm -r -f $source_path* && rm -r -f $end_path* && rm -r -f $trans_source_path* && rm -r -f $log_dir* > /dev/null 2>&1
     rm  $pre_list_file $list_file > /dev/null 2>&1
-    echo -e '\n' "$date_time_end" '\n'
-    echo -e '\n' "\e[1;96m $text1 \e[0m" '\n'
+    echo -e '\n' "$date_time_end" '\n' >> $log
+    echo -e '\n' "\e[1;96m $text1 \e[0m" '\n' >> $log
     break
   done
 done

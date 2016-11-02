@@ -10,7 +10,7 @@ Group=transcoder
 Restart=always
 
 ExecStartPre=/opt/transcoder/bin/rm.sh
-ExecStart=/bin/bash -c '/opt/transcoder/bin/transcoder.sh > /opt/transcoder/log/daemon.log'
+ExecStart=/opt/transcoder/bin/transcoder.sh
 
 [Install]
 WantedBy=multi-user.target
