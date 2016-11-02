@@ -8,7 +8,7 @@ bad_list1=/opt/transcoder/tmp/bad_list1.txt
 bad_list2=/opt/transcoder/tmp/bad_list2.txt
 s_str=/opt/transcoder/tmp/s_diff.txt
 d_str=/opt/transcoder/tmp/d_diff.txt
-log=/opt/transcoder/log/daemon.log
+log=/opt/transcoder/log/aid.log
 
 # Изначально пользователя с таким именем нужно создать
 

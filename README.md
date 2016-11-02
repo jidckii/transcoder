@@ -69,7 +69,7 @@ sudo chmod +x /opt/transcoder/bin/transcoder.sh
 
 читать вывод 
 ```
-tail -f /opt/transcoder/log/daemon.log
+tail -f /opt/transcoder/log/aid.log
 ```
 
 В /etc/fstab прописываем шары cifs в которые будем удаленно копировать
