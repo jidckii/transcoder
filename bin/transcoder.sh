@@ -94,6 +94,7 @@ while true; do
           -i $source_path$end_file_name/$name -c:v dvvideo -s 720x576 -vf crop=in_w-2*222 \
           -c:a pcm_s16le -f mxf $trans_source_path$end_file_name/$name.mxf > $log_dir$end_file_name/$name.log 2>&1 &
       done
+
     elif [ "$media_info_stp" -eq "4" ]; then
       tmp_video_size_hum=`du -s -h $source_path | awk '{print $1}'`
       echo -e '\n' "$date_time" '\n' >> $log
@@ -111,6 +112,7 @@ while true; do
           -filter_complex "[0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout]" -map "[aout]" \
           -ac 2 -c:a pcm_s16le -f mxf $trans_source_path$end_file_name/$name.mxf > $log_dir$end_file_name/$name.log 2>&1 &
       done
+
     else
       echo -e '\n' "\e[1;31m $no_profile \e[0m "'\n' >> $log
     fi
