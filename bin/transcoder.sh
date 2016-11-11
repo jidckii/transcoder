@@ -150,14 +150,11 @@ while true; do
     mediainfo $source_path$end_file_name/$media_info_name >> $log_file 2>&1
     sleep 1
     # Запускаем объединение
-    ffmpeg -f concat -safe 0 -i $list_file -map 0:0 -map 0:1 -c copy -f mov $end_path$end_file_name.mov > $log_dir$end_file_name/$end_file_name.log 2>&1 &
+    ffmpeg \
+    -f concat -safe 0 -i $list_file -map 0 -c copy -f mov \
+    $end_path$end_file_name.mov > $log_dir$end_file_name/$end_file_name.log 2>&1 & pid_ffmpeg=$!
 
-    sleep 1
-    ps_status=`ps -e | grep ffmpeg | wc -l`
-    while [ "$ps_status" -gt "0" ]; do
-      sleep 2
-      ps_status=`ps -e | grep ffmpeg | wc -l`
-    done
+    wait $pid_ffmpeg
 
     sleep 1
     echo -e '\n' $text9 '\n' >> $log_file 2>&1
@@ -168,18 +165,15 @@ while true; do
     mkdir $frank_path$date_dir$end_log_dir > /dev/null 2>&1
     zip -r $log_dir$end_file_name.zip $log_dir$end_file_name > /dev/null 2>&1
     echo -e '\n' "\e[4;33m $text6 \e[0m" '\n' >> $log
-    cp $end_path$end_file_name.mov $dalet_path >> $log_file 2>&1 &
+    cp $end_path$end_file_name.mov $dalet_path >> $log_file 2>&1 & pid_cp=$!
     echo -e '\n' "\e[4;33m $text4 \e[0m" '\n' >> $log
-    cp -R $source_path* $frank_path$date_dir$v_hd >> $log_file  2>&1
-    cp $end_path$end_file_name.mov $frank_path$date_dir$dlya_montaja >> $log_file 2>&1
+    cp -R $source_path* $frank_path$date_dir$v_hd >> $log_file  2>&1 & pid_cp1=$!
+    cp $end_path$end_file_name.mov $frank_path$date_dir$dlya_montaja >> $log_file 2>&1 & pid_cp2=$!
     cp $log_dir$end_file_name.zip $frank_path$date_dir$end_log_dir
 
-    sleep 1
-    cp_status=`ps -e | grep -w "cp" | wc -l`
-    while [ "$ps_status" -gt "0" ]; do
-      sleep 2
-      cp_status=`ps -e | grep -w "cp" | wc -l`
-    done
+    wait $pid_cp
+    wait $pid_cp1
+    wait $pid_cp2
 
     echo -e '\n' "\e[1;35m $text5 \e[0m" '\n' >> $log
     rm -r -f $source_path* && rm -r -f $end_path* && rm -r -f $trans_source_path* && rm -r -f $log_dir* > /dev/null 2>&1
