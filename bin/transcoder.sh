@@ -115,6 +115,7 @@ while true; do
 
     else
       echo -e '\n' "\e[1;31m $no_profile \e[0m "'\n' >> $log
+      break
     fi
 
     sleep 1
