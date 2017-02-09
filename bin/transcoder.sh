@@ -47,9 +47,12 @@ no_profile="Профиль для входящего видео не задан!
 SD_V_CODEC="dvvideo"
 SD_A_CODEC="pcm_s16le"
 FHD_V_CODEC="libx264"
-FHD_A_CODEC="ac3"
+FHD_A_CODEC="aac"
 
 TRANS_CONT="mp4"
+
+SETING_H264="-profile:v high10 -level:v 5.2"
+SETING_AUDIO="-b:a 384K"
 
 log_info(){
   DATE=$(date +%H:%M:%S_%d-%m-%Y)
@@ -118,8 +121,9 @@ FF_FHD(){
     sleep 0.5
     # Запускаем обсчет
     ffmpeg \
-      -i $source_path$end_file_name/$name -c:v $FHD_V_CODEC -b:v 10000K\
-      -c:a $FHD_A_CODEC -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
+      -i $source_path$end_file_name/$name -c:v $FHD_V_CODEC $SETING_H264\
+      -c:a $FHD_A_CODEC $SETING_AUDIO \
+      -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
   done
 elif [[ "$media_info_stp" -eq "4" ]]; then
   tmp_video_size_hum=$(du -s -h $source_path | awk '{print $1}')
@@ -131,9 +135,10 @@ elif [[ "$media_info_stp" -eq "4" ]]; then
     sleep 0.5
     # Запускаем обсчет
     ffmpeg \
-      -i $source_path$end_file_name/$name -map 0:0 -c:v $FHD_V_CODEC -preset veryfast -b:v 10000K\
+      -i $source_path$end_file_name/$name -map 0:0 -c:v $FHD_V_CODEC $SETING_H264\
       -filter_complex "[0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout]" -map "[aout]" \
-      -ac 2 -c:a $FHD_A_CODEC -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
+      -ac 2 -c:a $FHD_A_CODEC $SETING_AUDIO \
+      -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
   done
 else
   log_info "\e[1;31m $no_profile \e[0m "
@@ -159,11 +164,11 @@ s_wc=$(ls -1 $source_path$end_file_name | wc -l)
 mkdir $log_dir$end_file_name
 LOG_FILE=/home/transcoder/logs/$end_file_name/mediainfo.log
 
-if [[ $END_FORMAT == "SD_4:3" ]]; then
+if [[ $END_FORMAT == "SD" ]]; then
   FORMAT_PATH=""
   CONTAINER="mov"
   FF_SD
-elif [[ $END_FORMAT == "FHD_16:9" ]]; then
+elif [[ $END_FORMAT == "FHD" ]]; then
   FORMAT_PATH="FHD/"
   CONTAINER="mp4"
   FF_FHD
@@ -221,48 +226,47 @@ fi
 _copy(){
 log_info_file $text9 
 mediainfo $end_path$end_file_name.$CONTAINER  >> $LOG_FILE 2>&1
-DATE_end=`date +%H:%M_%d-%m-%Y`
 log_info_file $time_end
 log_info_file "Finish time"
 log_copy
 log_info "\e[4;33m $text6 \e[0m"
 
 if [[ -d "$dalet_path" ]];then
-  cp $end_path$end_file_name.$CONTAINER $dalet_path/$FORMAT_PATH >> $LOG_FILE 2>&1 & pid_cp=$!
+  cp $end_path$end_file_name.$CONTAINER $dalet_path$FORMAT_PATH >> $LOG_FILE 2>&1 & pid_cp=$!
 else
-  log_info "\e[1;31m Ошибка при копировании в dalet, путь не найден \e[0m"
+  log_info "\e[1;31m Ошибка при копировании в DALET, путь не найден \e[0m"
 fi
 
-if [[ -d "$frank_path$date_dir" ]];then
-  cp -R $source_path* $frank_path$date_dir$v_hd >> $LOG_FILE  2>&1 & pid_cp1=$!
-else
-  log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
-fi
+# if [[ -d "$frank_path$date_dir" ]];then
+#   cp -R $source_path* $frank_path$date_dir$v_hd >> $LOG_FILE  2>&1 & pid_cp1=$!
+# else
+#   log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
+# fi
 
-if [[ -d "$frank_path$date_dir" ]];then
-  cp $end_path$end_file_name.$CONTAINER $frank_path$date_dir$dlya_montaja >> $LOG_FILE 2>&1 & pid_cp2=$!
-else
-  log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
-fi
+# if [[ -d "$frank_path$date_dir" ]];then
+#   cp $end_path$end_file_name.$CONTAINER $frank_path$date_dir$dlya_montaja >> $LOG_FILE 2>&1 & pid_cp2=$!
+# else
+#   log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
+# fi
 
 
 wait $pid_cp
 if [[ "$?" -ne 0 ]]; then
-  log_info "\e[1;31m Ошибка при копировании в dalet  \e[0m"
+  log_info "\e[1;31m Ошибка во время копирования готового в DALET \e[0m"
   return 1
 fi
 
-wait $pid_cp1
-if [[ "$?" -ne 0 ]]; then
-  log_info "\e[1;31m Ошибка при копировании исходников на FRANK \e[0m "
-  return 1
-fi
+# wait $pid_cp1
+# if [[ "$?" -ne 0 ]]; then
+#   log_info "\e[1;31m Ошибка во время копирования исходников на FRANK \e[0m "
+#   return 1
+# fi
 
-wait $pid_cp2
-if [[ "$?" -ne 0 ]]; then
-  log_info "\e[1;31m Ошибка при копировании готового на FRANK \e[0m "
-  return 1
-fi
+# wait $pid_cp2
+# if [[ "$?" -ne 0 ]]; then
+#   log_info "\e[1;31m Ошибка во время копирования готового на FRANK \e[0m "
+#   return 1
+# fi
 
 log_info "\e[1;35m $text5 \e[0m"
 log_info "\e[1;96m $text1 \e[0m"
