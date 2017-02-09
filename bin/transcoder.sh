@@ -78,7 +78,8 @@ rm_all_file(){
 FF_SD(){
   if [[ "$media_info_stp" -eq "1" ]]; then
   tmp_video_size_hum=$(du -s -h $source_path | awk '{print $1}')
-  log_info "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m"
+  log_info "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m \
+  $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m"
   log_info_file $time_enter
   log_info_file $end_file_name
   mkdir $trans_source_path$end_file_name 2>&1
@@ -87,11 +88,13 @@ FF_SD(){
     # Запускаем обсчет
     ffmpeg \
       -i $source_path$end_file_name/$name -c:v $SD_V_CODEC -s 720x576 -vf crop=in_w-2*222 \
-      -c:a $SD_A_CODEC -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
+      -c:a $SD_A_CODEC -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > \
+      $log_dir$end_file_name/$name.log 2>&1 &
   done
 elif [[ "$media_info_stp" -eq "4" ]]; then
   tmp_video_size_hum=$(du -s -h $source_path | awk '{print $1}')
-  log_info "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m"
+  log_info "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m \
+  $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m"
   log_info_file $time_enter 
   log_info_file $end_file_name
   mkdir $trans_source_path$end_file_name 2>&1
@@ -101,7 +104,8 @@ elif [[ "$media_info_stp" -eq "4" ]]; then
     ffmpeg \
       -i $source_path$end_file_name/$name -map 0:0 -c:v $SD_V_CODEC -s 720x576 -vf crop=in_w-2*222 \
       -filter_complex "[0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout]" -map "[aout]" \
-      -ac 2 -c:a $SD_A_CODEC -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
+      -ac 2 -c:a $SD_A_CODEC -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > \
+      $log_dir$end_file_name/$name.log 2>&1 &
   done
 else
   log_info "\e[1;31m $no_profile \e[0m "
@@ -113,7 +117,8 @@ fi
 FF_FHD(){
   if [[ "$media_info_stp" -eq "1" ]]; then
   tmp_video_size_hum=$(du -s -h $source_path | awk '{print $1}')
-  log_info "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m"
+  log_info "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m \
+  $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m"
   log_info_file $time_enter
   log_info_file $end_file_name
   mkdir $trans_source_path$end_file_name 2>&1
@@ -127,7 +132,8 @@ FF_FHD(){
   done
 elif [[ "$media_info_stp" -eq "4" ]]; then
   tmp_video_size_hum=$(du -s -h $source_path | awk '{print $1}')
-  log_info "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m"
+  log_info "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m \
+  $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m"
   log_info_file $time_enter
   log_info_file $end_file_name
   mkdir $trans_source_path$end_file_name 2>&1
@@ -150,128 +156,127 @@ fi
 
 
 transcoding(){
-
-DATE=$(date +%H:%M:%S_%d-%m-%Y)
-date_dir=$(date +%d.%m.%Y)
-next_file=`ls -t -r -1 $queue_path | awk '{print $1}' | head -n 1`
-
-mv $queue_path$next_file $source_path       # перемещаем из очереди в рабочий каталог
-end_file_name=$(ls -1 $source_path)
-END_FORMAT=$(echo $end_file_name | awk -F. '{print $NF}')
-media_info_name=$(ls -1 $source_path$end_file_name | sed -n -e 1p)
-media_info_stp=$(mediainfo $source_path$end_file_name/$media_info_name | grep Audio | wc -l)
-s_wc=$(ls -1 $source_path$end_file_name | wc -l)
-mkdir $log_dir$end_file_name
-LOG_FILE=/home/transcoder/logs/$end_file_name/mediainfo.log
-
-if [[ $END_FORMAT == "SD" ]]; then
-  FORMAT_PATH=""
-  CONTAINER="mov"
-  FF_SD
-elif [[ $END_FORMAT == "FHD" ]]; then
-  FORMAT_PATH="FHD/"
-  CONTAINER="mp4"
-  FF_FHD
-else
-  log_info "\e[1;31m Ошибка определения формата SD/FHD \e[0m "
-  log_info "$END_FORMAT"
-  return 1
-fi
-
-sleep 1
-
-ps_status=$(ps -e | grep ffmpeg | wc -l)
-while [ "$ps_status" -gt "0" ]; do
-  sleep 5
-  ps_status=$(ps -e | grep ffmpeg | wc -l)
-done
-d_wc=$(ls -1 $trans_source_path$end_file_name | wc -l)
-if [ "$s_wc" -ne "$d_wc" ]; then
-  ls -1 $source_path$end_file_name > $s_str
-  ls -1 $trans_source_path$end_file_name  | sed 's/.$TRANS_CONT//g' > $d_str
-  diff $s_str $d_str | awk 'FNR>1' | awk '{print $2}' > $bad_list1
-  bad_list=$(cat $bad_list1)
-  log_info "\e[1;31m $text10 \e[0m "
-  log_info $bad_list
-  log_info "\e[1;31m $text11 \e[0m"
-  log_info $text10 '\n' $bad_list '\n'
-  awk '{print "cp '$source_path$end_file_name'/"$0" '$frank_path$date_dir$bad_dir$end_file_name'"}' $bad_list1 > $bad_list2
-  cp $template $workcopy
-  echo `cat $bad_list2` >> $workcopy
-  mkdir -p $frank_path$date_dir$bad_dir$end_file_name > /dev/null 2>&1
-  sh $workcopy
-fi
-
-find $trans_source_path -name "*.$TRANS_CONT" > $pre_list_file 2>&1
-awk '{print "file "$0""}' $pre_list_file | sort > $list_file 2>&1
-tmp_video_size_hum=$(du -s -h $trans_source_path | awk '{print $1}')
-log_info "\e[1;32m $text12 \e[1;33m $end_file_name \e[1;95m $d_wc \e[1;32m файлов \e[0m"
-log_info_file $text8 
-mediainfo $source_path$end_file_name/$media_info_name >> $LOG_FILE 2>&1
-sleep 1
-# Запускаем объединение
-ffmpeg \
--f concat -safe 0 -i $list_file -map 0 -c copy -f $CONTAINER \
-$end_path$end_file_name.$CONTAINER > $log_dir$end_file_name/$end_file_name.log 2>&1 & pid_ffmpeg=$!
-wait $pid_ffmpeg
-
-if [[ "$?" -ne 0 ]]; then
-  log_info "\e[1;31m Ошибка при объединении \e[0m "
-  log_copy
+  date_dir=$(date +%d.%m.%Y)
+  next_file=`ls -t -r -1 $queue_path | awk '{print $1}' | head -n 1`
   
-  return 1
-fi
+  mv $queue_path$next_file $source_path       # перемещаем из очереди в рабочий каталог
+  end_file_name=$(ls -1 $source_path)
+  END_FORMAT=$(echo $end_file_name | awk -F. '{print $NF}')
+  media_info_name=$(ls -1 $source_path$end_file_name | sed -n -e 1p)
+  media_info_stp=$(mediainfo $source_path$end_file_name/$media_info_name | grep Audio | wc -l)
+  s_wc=$(ls -1 $source_path$end_file_name | wc -l)
+  mkdir $log_dir$end_file_name
+  LOG_FILE=/home/transcoder/logs/$end_file_name/mediainfo.log
+  
+  if [[ $END_FORMAT == "SD" ]]; then
+    FORMAT_PATH=""
+    CONTAINER="mov"
+    FF_SD
+  elif [[ $END_FORMAT == "FHD" ]]; then
+    FORMAT_PATH="FHD/"
+    CONTAINER="mp4"
+    FF_FHD
+  else
+    log_info "\e[1;31m Ошибка определения формата SD/FHD \e[0m "
+    log_info "$END_FORMAT"
+    return 1
+  fi
+  
+  sleep 1
+  
+  ps_status=$(ps -e | grep ffmpeg | wc -l)
+  while [ "$ps_status" -gt "0" ]; do
+    sleep 5
+    ps_status=$(ps -e | grep ffmpeg | wc -l)
+  done
+  d_wc=$(ls -1 $trans_source_path$end_file_name | wc -l)
+  if [ "$s_wc" -ne "$d_wc" ]; then
+    ls -1 $source_path$end_file_name > $s_str
+    ls -1 $trans_source_path$end_file_name  | sed 's/.$TRANS_CONT//g' > $d_str
+    diff $s_str $d_str | awk 'FNR>1' | awk '{print $2}' > $bad_list1
+    bad_list=$(cat $bad_list1)
+    log_info "\e[1;31m $text10 \e[0m "
+    log_info $bad_list
+    log_info "\e[1;31m $text11 \e[0m"
+    log_info $text10 '\n' $bad_list '\n'
+    awk '{print "cp '$source_path$end_file_name'/"$0" \
+    '$frank_path$date_dir$bad_dir$end_file_name'"}' $bad_list1 > $bad_list2
+    cp $template $workcopy
+    echo `cat $bad_list2` >> $workcopy
+    mkdir -p $frank_path$date_dir$bad_dir$end_file_name > /dev/null 2>&1
+    sh $workcopy
+  fi
+  
+  find $trans_source_path -name "*.$TRANS_CONT" > $pre_list_file 2>&1
+  awk '{print "file "$0""}' $pre_list_file | sort > $list_file 2>&1
+  tmp_video_size_hum=$(du -s -h $trans_source_path | awk '{print $1}')
+  log_info "\e[1;32m $text12 \e[1;33m $end_file_name \e[1;95m $d_wc \e[1;32m файлов \e[0m"
+  log_info_file $text8 
+  mediainfo $source_path$end_file_name/$media_info_name >> $LOG_FILE 2>&1
+  sleep 1
+  # Запускаем объединение
+  ffmpeg \
+  -f concat -safe 0 -i $list_file -map 0 -c copy -f $CONTAINER \
+  $end_path$end_file_name.$CONTAINER > $log_dir$end_file_name/$end_file_name.log 2>&1 & pid_ffmpeg=$!
+  wait $pid_ffmpeg
+  
+  if [[ "$?" -ne 0 ]]; then
+    log_info "\e[1;31m Ошибка при объединении \e[0m "
+    log_copy
+    
+    return 1
+  fi
 }
 
 _copy(){
-log_info_file $text9 
-mediainfo $end_path$end_file_name.$CONTAINER  >> $LOG_FILE 2>&1
-log_info_file $time_end
-log_info_file "Finish time"
-log_copy
-log_info "\e[4;33m $text6 \e[0m"
-
-if [[ -d "$dalet_path" ]];then
-  cp $end_path$end_file_name.$CONTAINER $dalet_path$FORMAT_PATH >> $LOG_FILE 2>&1 & pid_cp=$!
-else
-  log_info "\e[1;31m Ошибка при копировании в DALET, путь не найден \e[0m"
-fi
-
-# if [[ -d "$frank_path$date_dir" ]];then
-#   cp -R $source_path* $frank_path$date_dir$v_hd >> $LOG_FILE  2>&1 & pid_cp1=$!
-# else
-#   log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
-# fi
-
-# if [[ -d "$frank_path$date_dir" ]];then
-#   cp $end_path$end_file_name.$CONTAINER $frank_path$date_dir$dlya_montaja >> $LOG_FILE 2>&1 & pid_cp2=$!
-# else
-#   log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
-# fi
-
-
-wait $pid_cp
-if [[ "$?" -ne 0 ]]; then
-  log_info "\e[1;31m Ошибка во время копирования готового в DALET \e[0m"
-  return 1
-fi
-
-# wait $pid_cp1
-# if [[ "$?" -ne 0 ]]; then
-#   log_info "\e[1;31m Ошибка во время копирования исходников на FRANK \e[0m "
-#   return 1
-# fi
-
-# wait $pid_cp2
-# if [[ "$?" -ne 0 ]]; then
-#   log_info "\e[1;31m Ошибка во время копирования готового на FRANK \e[0m "
-#   return 1
-# fi
-
-log_info "\e[1;35m $text5 \e[0m"
-log_info "\e[1;96m $text1 \e[0m"
-rm_all_file
-return 0
+  log_info_file $text9 
+  mediainfo $end_path$end_file_name.$CONTAINER  >> $LOG_FILE 2>&1
+  log_info_file $time_end
+  log_info_file "Finish time"
+  log_copy
+  log_info "\e[4;33m $text6 \e[0m"
+  
+  if [[ -d "$dalet_path" ]];then
+    cp $end_path$end_file_name.$CONTAINER $dalet_path$FORMAT_PATH >> $LOG_FILE 2>&1 & pid_cp=$!
+  else
+    log_info "\e[1;31m Ошибка при копировании в DALET, путь не найден \e[0m"
+  fi
+  
+  # if [[ -d "$frank_path$date_dir" ]];then
+  #   cp -R $source_path* $frank_path$date_dir$v_hd >> $LOG_FILE  2>&1 & pid_cp1=$!
+  # else
+  #   log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
+  # fi
+  
+  # if [[ -d "$frank_path$date_dir" ]];then
+  #   cp $end_path$end_file_name.$CONTAINER $frank_path$date_dir$dlya_montaja >> $LOG_FILE 2>&1 & pid_cp2=$!
+  # else
+  #   log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
+  # fi
+  
+  
+  wait $pid_cp
+  if [[ "$?" -ne 0 ]]; then
+    log_info "\e[1;31m Ошибка во время копирования готового в DALET \e[0m"
+    return 1
+  fi
+  
+  # wait $pid_cp1
+  # if [[ "$?" -ne 0 ]]; then
+  #   log_info "\e[1;31m Ошибка во время копирования исходников на FRANK \e[0m "
+  #   return 1
+  # fi
+  
+  # wait $pid_cp2
+  # if [[ "$?" -ne 0 ]]; then
+  #   log_info "\e[1;31m Ошибка во время копирования готового на FRANK \e[0m "
+  #   return 1
+  # fi
+  
+  log_info "\e[1;35m $text5 \e[0m"
+  log_info "\e[1;96m $text1 \e[0m"
+  rm_all_file
+  return 0
 }
 
 
@@ -286,21 +291,24 @@ while true; do
     tmp_video_size_hum=$(du -s -h $queue_path | awk '{print $1}')
     log_info "\e[0;32m $text7 \e[1;95m $tmp_video_size_hum  \e[0m"
 
-    if [[ "$tmp_video_size1" -ne "$tmp_video_size2" ]]; then  # Убеждаемся, что временный каталог более не растет
+    # Убеждаемся, что временный каталог более не растет
+    if [[ "$tmp_video_size1" -ne "$tmp_video_size2" ]]; then  
       log_info "\e[0;32m $text2 \e[0m"
       continue
     fi
 
     transcoding
     if [[ "$?" -ne 0 ]]; then
-      log_info "\e[1;31m Функция транскодирования завершилась ошибкой. Обратитесь к системному администратору \e[0m "
+      log_info "\e[1;31m Функция транскодирования завершилась ошибкой. \
+      Обратитесь к системному администратору \e[0m "
       rm_all_file
       break
     fi
 
     _copy
     if [[ "$?" -ne 0 ]]; then
-      log_info "\e[1;31m Функция копирования завершилась ошибкой. Обратитесь к системному администратору \e[0m "
+      log_info "\e[1;31m Функция копирования завершилась ошибкой. \
+      Обратитесь к системному администратору \e[0m "
       rm_all_file
       break
     fi
