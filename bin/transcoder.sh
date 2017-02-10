@@ -1,17 +1,16 @@
 #!/bin/bash
 
-set -x
+# set -x
 
-pre_list_file=/opt/aid-transcoder/tmp/pre_list_file.txt
-list_file=/opt/aid-transcoder/tmp/list_file.txt
-template=/opt/aid-transcoder/tmp/template.sh
-workcopy=/opt/aid-transcoder/tmp/workcopy.sh
-bad_list1=/opt/aid-transcoder/tmp/bad_list1.txt
-bad_list2=/opt/aid-transcoder/tmp/bad_list2.txt
-s_str=/opt/aid-transcoder/tmp/s_diff.txt
-d_str=/opt/aid-transcoder/tmp/d_diff.txt
-log=/opt/aid-transcoder/log/aid.log
-LOG=/opt/aid-transcoder/log/aid.log
+pre_list_file=/opt/transcoder/tmp/pre_list_file.txt
+list_file=/opt/transcoder/tmp/list_file.txt
+template=/opt/transcoder/tmp/template.sh
+workcopy=/opt/transcoder/tmp/workcopy.sh
+bad_list1=/opt/transcoder/tmp/bad_list1.txt
+bad_list2=/opt/transcoder/tmp/bad_list2.txt
+s_str=/opt/transcoder/tmp/s_diff.txt
+d_str=/opt/transcoder/tmp/d_diff.txt
+LOG=/opt/transcoder/log/aid.log
 # Изначально пользователя с таким именем нужно создать
 
 queue_path=/home/transcoder/queue-video-tmp/
@@ -43,15 +42,14 @@ text12="Идет объединение"
 time_enter="Начата обработка"
 time_end="Завершена обработка"
 no_profile="Профиль для входящего видео не задан!"
+FIN_FORM_TXT="Конечный формат выбран:"
 
 SD_V_CODEC="dvvideo"
 SD_A_CODEC="pcm_s16le"
 FHD_V_CODEC="libx264"
 FHD_A_CODEC="aac"
 
-TRANS_CONT="mp4"
-
-SETING_H264="-profile:v high10 -level:v 5.2"
+SETING_H264="-profile:v high -level:v 3.0"
 SETING_AUDIO="-b:a 384K"
 
 log_info(){
@@ -88,8 +86,8 @@ FF_SD(){
     # Запускаем обсчет
     ffmpeg \
       -i $source_path$end_file_name/$name -c:v $SD_V_CODEC -s 720x576 -vf crop=in_w-2*222 \
-      -c:a $SD_A_CODEC -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > \
-      $log_dir$end_file_name/$name.log 2>&1 &
+      -c:a $SD_A_CODEC -f $TRANS_CONT \
+      $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
   done
 elif [[ "$media_info_stp" -eq "4" ]]; then
   tmp_video_size_hum=$(du -s -h $source_path | awk '{print $1}')
@@ -104,8 +102,8 @@ elif [[ "$media_info_stp" -eq "4" ]]; then
     ffmpeg \
       -i $source_path$end_file_name/$name -map 0:0 -c:v $SD_V_CODEC -s 720x576 -vf crop=in_w-2*222 \
       -filter_complex "[0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout]" -map "[aout]" \
-      -ac 2 -c:a $SD_A_CODEC -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > \
-      $log_dir$end_file_name/$name.log 2>&1 &
+      -ac 2 -c:a $SD_A_CODEC -f $TRANS_CONT \
+      $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
   done
 else
   log_info "\e[1;31m $no_profile \e[0m "
@@ -169,12 +167,16 @@ transcoding(){
   LOG_FILE=/home/transcoder/logs/$end_file_name/mediainfo.log
   
   if [[ $END_FORMAT == "SD" ]]; then
+    log_info "\e[1;32m $FIN_FORM_TXT \e[1;93m $END_FORMAT \e[0m"
     FORMAT_PATH=""
     CONTAINER="mov"
+    TRANS_CONT="mxf"
     FF_SD
   elif [[ $END_FORMAT == "FHD" ]]; then
+    log_info "\e[1;32m $FIN_FORM_TXT \e[1;93m $END_FORMAT \e[0m"
     FORMAT_PATH="FHD/"
     CONTAINER="mp4"
+    TRANS_CONT="mp4"
     FF_FHD
   else
     log_info "\e[1;31m Ошибка определения формата SD/FHD \e[0m "
@@ -242,17 +244,17 @@ _copy(){
     log_info "\e[1;31m Ошибка при копировании в DALET, путь не найден \e[0m"
   fi
   
-  # if [[ -d "$frank_path$date_dir" ]];then
-  #   cp -R $source_path* $frank_path$date_dir$v_hd >> $LOG_FILE  2>&1 & pid_cp1=$!
-  # else
-  #   log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
-  # fi
+  if [[ -d "$frank_path$date_dir" ]];then
+    cp -R $source_path* $frank_path$date_dir$v_hd >> $LOG_FILE  2>&1 & pid_cp1=$!
+  else
+    log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
+  fi
   
-  # if [[ -d "$frank_path$date_dir" ]];then
-  #   cp $end_path$end_file_name.$CONTAINER $frank_path$date_dir$dlya_montaja >> $LOG_FILE 2>&1 & pid_cp2=$!
-  # else
-  #   log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
-  # fi
+  if [[ -d "$frank_path$date_dir" ]];then
+    cp $end_path$end_file_name.$CONTAINER $frank_path$date_dir$dlya_montaja >> $LOG_FILE 2>&1 & pid_cp2=$!
+  else
+    log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
+  fi
   
   
   wait $pid_cp
@@ -261,17 +263,17 @@ _copy(){
     return 1
   fi
   
-  # wait $pid_cp1
-  # if [[ "$?" -ne 0 ]]; then
-  #   log_info "\e[1;31m Ошибка во время копирования исходников на FRANK \e[0m "
-  #   return 1
-  # fi
+  wait $pid_cp1
+  if [[ "$?" -ne 0 ]]; then
+    log_info "\e[1;31m Ошибка во время копирования исходников на FRANK \e[0m "
+    return 1
+  fi
   
-  # wait $pid_cp2
-  # if [[ "$?" -ne 0 ]]; then
-  #   log_info "\e[1;31m Ошибка во время копирования готового на FRANK \e[0m "
-  #   return 1
-  # fi
+  wait $pid_cp2
+  if [[ "$?" -ne 0 ]]; then
+    log_info "\e[1;31m Ошибка во время копирования готового на FRANK \e[0m "
+    return 1
+  fi
   
   log_info "\e[1;35m $text5 \e[0m"
   log_info "\e[1;96m $text1 \e[0m"
@@ -299,7 +301,7 @@ while true; do
 
     transcoding
     if [[ "$?" -ne 0 ]]; then
-      log_info "\e[1;31m Функция транскодирования завершилась ошибкой. \
+      log_info "\e[1;31m Функция транскодирования завершилась ошибкой. \n \
       Обратитесь к системному администратору \e[0m "
       rm_all_file
       break
@@ -307,7 +309,7 @@ while true; do
 
     _copy
     if [[ "$?" -ne 0 ]]; then
-      log_info "\e[1;31m Функция копирования завершилась ошибкой. \
+      log_info "\e[1;31m Функция копирования завершилась ошибкой. \n \
       Обратитесь к системному администратору \e[0m "
       rm_all_file
       break

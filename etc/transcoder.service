@@ -1,6 +1,6 @@
 [Unit]
 Description=Auto Ingest Daemon (AID) Server
-Documentation=https://github.com/jidckii/aid-server
+Documentation=https://github.com/jidckii/transcoder
 After=network.target
 
 [Service]
@@ -9,8 +9,8 @@ Group=transcoder
 
 Restart=always
 
-ExecStartPre=/opt/aid-server/bin/rm.sh
-ExecStart=/opt/aid-server/bin/transcoder.sh
+ExecStartPre=/opt/transcoder/bin/rm.sh
+ExecStart=/opt/transcoder/bin/transcoder.sh
 
 [Install]
 WantedBy=multi-user.target
