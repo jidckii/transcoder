@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+# set -x
 
 AID_HOME_PATH=${AID_HOME_PATH:-"/opt/aid-server"}
 
