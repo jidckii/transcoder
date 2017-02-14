@@ -8,7 +8,7 @@ AID_BIN_PATH=${AID_BIN_PATH:-"$AID_HOME_PATH/bin"}
 AID_LOG_PATH=${AID_LOG_PATH:-"$AID_HOME_PATH/log"}
 AID_TMP_PATH=${AID_TMP_PATH:-"$AID_HOME_PATH/tmp"}
 
-AID_WORK_PATH=${AID_WORK_PATH:-"/home/emedvedev"}
+AID_WORK_PATH=${AID_WORK_PATH:-"/home/transcoder"}
 
 # source "${$AID_BIN_PATH/ff_fhd.sh}"
 # source "${$AID_BIN_PATH/ff_sd.sh}"

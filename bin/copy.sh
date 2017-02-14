@@ -26,10 +26,9 @@ _copy(){
     log_info "\e[1;31m Ошибка при копировании на FRANK, путь не найден \e[0m"
   fi
   
-  
-  wait $pid_cp
+  wait $pid_cp2
   if [[ "$?" -ne 0 ]]; then
-    log_info "\e[1;31m Ошибка во время копирования готового в DALET \e[0m"
+    log_info "\e[1;31m Ошибка во время копирования готового на FRANK \e[0m "
     return 1
   fi
   
@@ -39,11 +38,13 @@ _copy(){
     return 1
   fi
   
-  wait $pid_cp2
+  wait $pid_cp
   if [[ "$?" -ne 0 ]]; then
-    log_info "\e[1;31m Ошибка во время копирования готового на FRANK \e[0m "
+    log_info "\e[1;31m Ошибка во время копирования готового в DALET \e[0m"
     return 1
   fi
+  
+  
   
   log_info "\e[1;35m $text5 \e[0m"
   log_info "\e[1;96m $text1 \e[0m"

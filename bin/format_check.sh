@@ -2,7 +2,7 @@
 
 p_fhd_mts(){
 	AUDIO_COMPLEX=""
-	FORMAT_PATH="FHD/"
+	FORMAT_PATH="RSU_HD_MXF/"
 	CONTAINER="mxf"
 	TRANS_CONT="mxf"
 	V_CODEC="mpeg2video"
@@ -14,7 +14,7 @@ p_fhd_mts(){
 
 p_fhd_mp4_1(){
 	AUDIO_COMPLEX=""
-	FORMAT_PATH="FHD/"
+	FORMAT_PATH="RSU_HD_MXF/"
 	CONTAINER="mxf"
 	TRANS_CONT="mxf"
 	V_CODEC="mpeg2video"
@@ -26,7 +26,7 @@ p_fhd_mp4_1(){
 
 p_fhd_mp4_4(){
 	AUDIO_COMPLEX="-filter_complex [0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout] -map [aout]"
-	FORMAT_PATH="FHD/"
+	FORMAT_PATH="RSU_HD_MXF/"
 	CONTAINER="mxf"
 	TRANS_CONT="mxf"
 	V_CODEC="mpeg2video"
@@ -38,7 +38,7 @@ p_fhd_mp4_4(){
 
 p_sd_mts(){
 	AUDIO_COMPLEX=""
-	FORMAT_PATH="FHD/"
+	FORMAT_PATH="IMPORT_EDITOR/"
 	CONTAINER="mov"
 	TRANS_CONT="mxf"
 	V_CODEC="dvvideo"
@@ -50,7 +50,7 @@ p_sd_mts(){
 
 p_sd_mp4_1(){
 	AUDIO_COMPLEX=""
-	FORMAT_PATH=""
+	FORMAT_PATH="IMPORT_EDITOR/"
 	CONTAINER="mov"
 	TRANS_CONT="mxf"
 	V_CODEC="dvvideo"
@@ -62,7 +62,7 @@ p_sd_mp4_1(){
 
 p_sd_mp4_4(){
 	AUDIO_COMPLEX="-filter_complex [0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout] -map [aout]"
-	FORMAT_PATH=""
+	FORMAT_PATH="IMPORT_EDITOR/"
 	CONTAINER="mov"
 	TRANS_CONT="mxf"
 	V_CODEC="dvvideo"
@@ -92,9 +92,9 @@ format_check(){
 		elif [[ "$media_info_stp" -eq "4" ]]; then
 			p_sd_mp4_4
 		else
-		log_info "\e[1;31m $no_profile \e[0m "
-		log_copy
-		return 1
+			log_info "\e[1;31m $no_profile \e[0m "
+			log_copy
+			return 1
 		fi
 
 	elif [[ $END_RESOLUTION == "FHD" ]]; then
@@ -111,9 +111,9 @@ format_check(){
 		elif [[ "$media_info_stp" -eq "4" ]]; then
 			p_fhd_mp4_4
 		else
-		log_info "\e[1;31m $no_profile \e[0m "
-		log_copy
-		return 1
+			log_info "\e[1;31m $no_profile \e[0m "
+			log_copy
+			return 1
 		fi
 
 	else

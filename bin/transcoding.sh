@@ -7,13 +7,14 @@ transcoding(){
   mv $queue_path$next_file $source_path       # перемещаем из очереди в рабочий каталог
   end_file_name=$(ls -1 $source_path)
   mkdir $log_dir$end_file_name
-  LOG_FILE=/home/transcoder/logs/$end_file_name/mediainfo.log
+  LOG_FILE="${log_dir/$end_file_name}/mediainfo.log"
 
   format_check
   if [[ "$?" -ne 0 ]]; then
     log_info "\e[1;31m Функция format_check завершилась ошибкой. \n \
     Обратитесь к системному администратору \e[0m "
-    rm_all_file
+    log_copy
+    return 1
   fi
 
   tmp_video_size_hum=$(du -s -h $source_path | awk '{print $1}')
@@ -23,18 +24,28 @@ transcoding(){
   log_info_file $end_file_name
   mkdir $trans_source_path$end_file_name 2>&1
 
-
-	for name in $(ls -1 $source_path$end_file_name); do
+  if [[ "$media_info_stp" -eq "1" ]]; then
+    for name in $(ls -1 $source_path$end_file_name); do
     sleep 0.5
     # Запускаем обсчет
-    ffmpeg \
+      ffmpeg \
       -i $source_path$end_file_name/$name $MAP_SET -c:v $V_CODEC $SETING_VIDEO \
-      $AUDIO_COMPLEX -c:a $A_CODEC $SETING_AUDIO \
+      -c:a $A_CODEC $SETING_AUDIO \
       -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
-  done
+    done
+  elif [[ "$media_info_stp" -eq "4" ]]; then
+        for name in $(ls -1 $source_path$end_file_name); do
+    sleep 0.5
+    # Запускаем обсчет
+      ffmpeg \
+      -i $source_path$end_file_name/$name $MAP_SET -c:v $V_CODEC $SETING_VIDEO \
+      -filter_complex "[0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout]" -map "[aout]" \
+      -c:a $A_CODEC $SETING_AUDIO \
+      -f $TRANS_CONT $trans_source_path$end_file_name/$name.$TRANS_CONT > $log_dir$end_file_name/$name.log 2>&1 &
+    done
+  fi
 
   sleep 1
-  
   ps_status=$(ps -e | grep ffmpeg | wc -l)
   while [ "$ps_status" -gt "0" ]; do
     sleep 5
@@ -52,11 +63,12 @@ transcoding(){
     log_info "\e[1;31m $text11 \e[0m"
     log_info $text10 '\n' $bad_list '\n'
     awk '{print "cp '$source_path$end_file_name'/"$0" \
-    '$frank_path$date_dir$bad_dir$end_file_name\/'"}' $bad_list1 > $bad_list2
+    '$frank_path$date_dir$bad_dir$end_file_name/'"}' $bad_list1 > $bad_list2
     cp $template $workcopy
-    echo `cat $bad_list2` >> $workcopy
+    echo $(cat $bad_list2) >> $workcopy
     mkdir -p $frank_path$date_dir$bad_dir$end_file_name > /dev/null 2>&1
     sh $workcopy
+    log_copy
     return 1
   fi
   
