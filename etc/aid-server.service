@@ -9,8 +9,8 @@ Group=transcoder
 
 Restart=always
 
-ExecStartPre=/opt/transcoder/bin/rm.sh
-ExecStart=/opt/transcoder/bin/transcoder.sh
+ExecStartPre=/opt/aid-server/bin/rm.sh
+ExecStart=/opt/aid-server/bin/aid-server.sh
 
 [Install]
 WantedBy=multi-user.target
