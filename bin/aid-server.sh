@@ -37,6 +37,10 @@ while true; do
       continue
     fi
 
+    COUNTER=$(cat $COUNTER_LOG)
+    let COUNTER=COUNTER+1
+    echo $COUNTER > $COUNTER_LOG
+
     transcoding
     if [[ "$?" -ne 0 ]]; then
       log_info "\e[1;31m Функция транскодирования завершилась ошибкой. \n \
