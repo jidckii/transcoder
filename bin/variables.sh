@@ -11,6 +11,7 @@ bad_list2="$AID_TMP_PATH/bad_list2.txt"
 s_str="$AID_TMP_PATH/s_diff.txt"
 d_str="$AID_TMP_PATH/d_diff.txt"
 LOG="$AID_LOG_PATH/aid.log"
+COUNTER_LOG="$AID_LOG_PATH/counter.log"
 # Изначально пользователя с таким именем нужно создать
 
 queue_path="$AID_WORK_PATH/queue-video-tmp/"

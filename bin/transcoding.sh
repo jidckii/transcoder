@@ -7,7 +7,7 @@ transcoding(){
   mv $queue_path$next_file $source_path       # перемещаем из очереди в рабочий каталог
   end_file_name=$(ls -1 $source_path)
   mkdir $log_dir$end_file_name
-  LOG_FILE="${log_dir/$end_file_name}/mediainfo.log"
+  LOG_FILE="$log_dir$end_file_name/mediainfo.log"
 
   format_check
   if [[ "$?" -ne 0 ]]; then
@@ -17,6 +17,7 @@ transcoding(){
     return 1
   fi
 
+  s_wc=$(ls -1 $source_path$end_file_name | wc -l)
   tmp_video_size_hum=$(du -s -h $source_path | awk '{print $1}')
   log_info "\e[1;32m $text3 \e[1;93m $end_file_name \e[1;95m \
   $s_wc \e[1;32m файлов \e[1;32m объемом \e[1;95m $tmp_video_size_hum \e[0m"
@@ -82,8 +83,7 @@ transcoding(){
   # Запускаем объединение
   ffmpeg \
   -f concat -safe 0 -i $list_file -map 0 -c copy -f $CONTAINER \
-  $end_path$end_file_name.$CONTAINER > $log_dir$end_file_name/$end_file_name.log 2>&1 & pid_ffmpeg=$!
-  wait $pid_ffmpeg
+  $end_path$end_file_name.$CONTAINER > $log_dir$end_file_name/$end_file_name.log 
   
   if [[ "$?" -ne 0 ]]; then
     log_info "\e[1;31m Ошибка при объединении \e[0m "

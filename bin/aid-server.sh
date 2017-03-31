@@ -39,7 +39,7 @@ while true; do
 
     COUNTER=$(cat $COUNTER_LOG)
     let COUNTER=COUNTER+1
-    echo $COUNTER > $COUNTER_LOG
+    echo "$COUNTER" > $COUNTER_LOG
 
     transcoding
     if [[ "$?" -ne 0 ]]; then

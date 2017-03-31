@@ -13,7 +13,7 @@ log_info_file(){
 log_copy(){
   mkdir $frank_path$date_dir$end_log_dir > /dev/null 2>&1
   zip -r $log_dir$end_file_name.zip $list_file $log_dir$end_file_name > /dev/null 2>&1
-  cp $log_dir$end_file_name.zip  $frank_path$date_dir$end_log_dir
+  cp $log_dir$end_file_name.zip  $frank_path$date_dir$end_log_dir 
 }
 
 rm_all_file(){

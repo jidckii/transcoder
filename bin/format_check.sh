@@ -2,8 +2,8 @@
 
 p_fhd_mts(){
 	AUDIO_COMPLEX=""
-	FORMAT_PATH="RSU_HD_MXF/"
-	CONTAINER="mxf"
+	FORMAT_PATH="HD_IMPORT_EDITOR/"
+	CONTAINER="mov"
 	TRANS_CONT="mxf"
 	V_CODEC="mpeg2video"
 	A_CODEC="pcm_s16le"
@@ -14,7 +14,7 @@ p_fhd_mts(){
 
 p_fhd_mp4_1(){
 	AUDIO_COMPLEX=""
-	FORMAT_PATH="RSU_HD_MXF/"
+	FORMAT_PATH="HD_IMPORT_EDITOR/"
 	CONTAINER="mxf"
 	TRANS_CONT="mxf"
 	V_CODEC="mpeg2video"
@@ -26,7 +26,7 @@ p_fhd_mp4_1(){
 
 p_fhd_mp4_4(){
 	AUDIO_COMPLEX="-filter_complex [0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout] -map [aout]"
-	FORMAT_PATH="RSU_HD_MXF/"
+	FORMAT_PATH="HD_IMPORT_EDITOR/"
 	CONTAINER="mxf"
 	TRANS_CONT="mxf"
 	V_CODEC="mpeg2video"
@@ -38,8 +38,8 @@ p_fhd_mp4_4(){
 
 p_sd_mts(){
 	AUDIO_COMPLEX=""
-	FORMAT_PATH="IMPORT_EDITOR/"
-	CONTAINER="mov"
+	FORMAT_PATH="SD_IMPORT_EDITOR/"
+	CONTAINER="mxf"
 	TRANS_CONT="mxf"
 	V_CODEC="dvvideo"
 	A_CODEC="pcm_s16le"
@@ -50,7 +50,7 @@ p_sd_mts(){
 
 p_sd_mp4_1(){
 	AUDIO_COMPLEX=""
-	FORMAT_PATH="IMPORT_EDITOR/"
+	FORMAT_PATH="SD_IMPORT_EDITOR/"
 	CONTAINER="mov"
 	TRANS_CONT="mxf"
 	V_CODEC="dvvideo"
@@ -62,7 +62,7 @@ p_sd_mp4_1(){
 
 p_sd_mp4_4(){
 	AUDIO_COMPLEX="-filter_complex [0:1][0:2][0:3][0:4] amerge=inputs=4,pan=stereo|c0=c0|c1<c1+c2+c3[aout] -map [aout]"
-	FORMAT_PATH="IMPORT_EDITOR/"
+	FORMAT_PATH="SD_IMPORT_EDITOR/"
 	CONTAINER="mov"
 	TRANS_CONT="mxf"
 	V_CODEC="dvvideo"
@@ -78,16 +78,16 @@ format_check(){
 	CONTAINER_TYPE=$(echo $source_path$end_file_name/$media_info_name | awk -F. '{print $NF}')
 	media_info_stp=$(mediainfo $source_path$end_file_name/$media_info_name | grep Audio | wc -l)
 
-	s_wc=$(ls -1 $source_path$end_file_name | wc -l)
-
 	if [[ $END_RESOLUTION == "SD" ]]; then
 		log_info "\e[1;32m $FIN_FORM_TXT \e[1;93m $END_RESOLUTION \e[0m"
 		
 		if [[ "$media_info_stp" -eq "1" ]]; then
 			if [[ $CONTAINER_TYPE != "MP4" ]]; then
 				p_sd_mts
+				log_info "p_sd_mts"
 			else
 				p_sd_mp4_1
+				log_info "p_sd_mp4_1"
 			fi
 		elif [[ "$media_info_stp" -eq "4" ]]; then
 			p_sd_mp4_4
@@ -104,12 +104,15 @@ format_check(){
 			
 			if [[ $CONTAINER_TYPE != "MP4" ]]; then
 				p_fhd_mts
+				log_info "p_fhd_mts"
 			else
 				p_fhd_mp4_1
+				log_info "p_fhd_mp4_1"
 			fi
 
 		elif [[ "$media_info_stp" -eq "4" ]]; then
 			p_fhd_mp4_4
+			log_info "p_fhd_mp4_4"
 		else
 			log_info "\e[1;31m $no_profile \e[0m "
 			log_copy
