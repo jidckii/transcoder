@@ -3,7 +3,7 @@
 p_fhd_mts(){
 	AUDIO_COMPLEX=""
 	FORMAT_PATH="HD_IMPORT_EDITOR/"
-	CONTAINER="mov"
+	CONTAINER="mxf"
 	TRANS_CONT="mxf"
 	V_CODEC="mpeg2video"
 	A_CODEC="pcm_s16le"
@@ -39,7 +39,7 @@ p_fhd_mp4_4(){
 p_sd_mts(){
 	AUDIO_COMPLEX=""
 	FORMAT_PATH="SD_IMPORT_EDITOR/"
-	CONTAINER="mxf"
+	CONTAINER="mov"
 	TRANS_CONT="mxf"
 	V_CODEC="dvvideo"
 	A_CODEC="pcm_s16le"
